@@ -14,11 +14,6 @@ This project demonstrates the asynchronous communication flow between two micros
    - 4.2 Sends a "Registration Successful" confirmation email.
    - 4.3 Finally, it saves the email record in the database.
 
-1. **Client Request:** The client sends a POST request to the "User Microservice" to register a new user.
-2. **User Microservice:** Receives the request, saves the user information in the PostgreSQL database, and sends a message to RabbitMQ.
-3. **RabbitMQ Broker:** Receives and holds the message for processing.
-4. **Email Microservice:** Consumes the message from RabbitMQ, sends a confirmation email to the new user, and logs the email in the database.
-
 This flow enables asynchronous communication, ensuring decoupling between the microservices for improved scalability and fault tolerance.
 
 ## Technologies Used
