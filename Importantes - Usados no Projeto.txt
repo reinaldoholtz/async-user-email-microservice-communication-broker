@@ -1,0 +1,77 @@
+- API Gateway : 
+  - é a porta da entrada dos microservicoes
+  - é responsavel por encaminhar as mensagens para os microservicos de forma correta
+  - Amazon API Gateway, Azure Api , Spring Cloud Gateway
+   
+
+ Comunicacao Assincrona entre Microservicos:
+ -------------------------------------------
+ 
+ - Importante:
+ . Quando esta sendo usado microservices, importante criar ID de Entidade como UUID,
+ ele é um identificador universal, para evitar conflitos de ids sequenciais
+ EX: ID da tabela TB_USERS 
+ private UUID userId;
+ 
+ 
+ . Criar uma Interface:
+	interface UserRepository extends JpaRepository<UserModel, UUID>
+	
+ . Criar um UserController
+   1 - Colocar anotacao @RestController
+   
+   2 - Criar metodo saverUser:
+	@PostMapping("/users")
+    public ResponseEntity<UserModel> saveUser(@RequestBody @Valid UserRecordDto userRecordDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body();	
+	}
+	Nota: HttpStatus.CREATED = codigo 201 - registro criado
+	
+   3 -	Criar um mapeamento pra receber os dados do cliente criar um Record "UserRecordDto"
+	public record UserRecordDto(@NotBlank String name, @NotBlank @Email String email) {
+    }
+	- No record colocar as anotacoes @NotBlank e @Email nos respectivos atributos e importante tb colocar o @Valid no parametro do 
+	metodo saverUser @Valid para garantir a validacao dos campos
+   
+   4 - Converter o Record em Model pra ser salvo na TB_USERS
+   BeanUtils.copyProperties(userRecordDto, userModel);
+
+    
+   5 - Criar o UserService no pacote services
+   @Service
+public class UserService {
+
+    //@Autowired
+    //UserRepository userRepository;
+
+    final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public UserModel save(UserModel userModel){
+        return userRepository.save(userModel);
+    }
+
+}
+	
+	Nota : 
+	- Inves de usar o @Autowired pode ser usado o criando um construtor deixa mais desacoplado
+	- @Transactional garante o rollback
+	
+	6. Teste no postman
+	http://localhost:8081/users
+	
+	{
+		"name": "Roberto Carlos",
+		"email": "contato@gmail.com"
+	}
+	
+	
+	7. Usar o https://www.cloudamqp.com/ para fazer o do RabbitMQ sem precisar fazer a instalacao 
+	
+	8. Depois de criar o login copiar o link da URL: amqps://ffanlwnc:wxY5YfD0qjfE1YKbFvsoPrHM185VfKQD@puffin.rmq2.cloudamqp.com/ffanlwnc da plataforma Cloud
+	
+   
