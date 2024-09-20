@@ -35,6 +35,6 @@ This flow enables asynchronous communication, ensuring decoupling between the mi
 7. **Cloud AMQP**: RabbitMQ hosted in the cloud to manage message queues.
 8. **SMTP (Google Mail)**: SMTP server used to send confirmation emails.
 
-## Full Flow of Asynchronous Communication
+
 
 
